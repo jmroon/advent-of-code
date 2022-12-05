@@ -1,13 +1,13 @@
 export function part1(input: string) {
-  const lines = input.split('\n');
-  const scores = lines.map((line) => score(line.charAt(0), line.charAt(2)));
+  const moves = input.split('\n');
+  const scores = moves.map((move) => score(move.charAt(0), move.charAt(2)));
   return scores.reduce((total, score) => (total += score), 0);
 }
 
 export function part2(input: string) {
   const lines = input.split('\n');
   const moves = lines.map((line) => mapMove(line.charAt(0), line.charAt(2)));
-  const scores = moves.map((line) => score(line.charAt(0), line.charAt(2)));
+  const scores = moves.map((move) => score(move.charAt(0), move.charAt(2)));
   return scores.reduce((total, score) => (total += score), 0);
 }
 
