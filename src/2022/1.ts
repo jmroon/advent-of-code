@@ -14,8 +14,8 @@ export function part2(input: string) {
 function caloriesByElfDescending(input: string): number[] {
   // get an array of numbers for each elf
   const calorieListByElf = input
-    .split("\n\n")
-    .map((elf) => elf.split("\n").map((item) => parseInt(item)));
+    .split('\n\n')
+    .map((elf) => elf.split('\n').map((item) => parseInt(item)));
 
   // reduce the array of calories to get the total calories for each elf
   const caloriesByElf = calorieListByElf.map((calorieListByElf) =>

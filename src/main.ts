@@ -1,9 +1,9 @@
-import * as fs from "fs/promises";
+import * as fs from 'fs/promises';
 
 const script = await import(`./${process.argv[2]}.js`);
 const data = (await fs.readFile(`./data/${process.argv[2]}.txt`))
   .toString()
-  .replaceAll("\r\n", "\n");
+  .replaceAll('\r\n', '\n');
 
 if (data.length === 0) console.error(`No data found for ${process.argv[2]}`);
 
