@@ -1,4 +1,17 @@
-export function part1(input: string): string {
+export function part1(input: string) {
+  return caloriesByElfDescending(input)[0];
+}
+
+export function part2(input: string) {
+  const caloriedByElfDescending = caloriesByElfDescending(input);
+  return (
+    caloriedByElfDescending[0] +
+    caloriedByElfDescending[1] +
+    caloriedByElfDescending[2]
+  );
+}
+
+function caloriesByElfDescending(input: string): number[] {
   // get an array of numbers for each elf
   const calorieListByElf = input
     .split("\n\n")
@@ -12,9 +25,5 @@ export function part1(input: string): string {
   // sort caloriesByElf in descending order
   caloriesByElf.sort((a, b) => b - a);
 
-  return caloriesByElf[0].toString();
-}
-
-export function part2(input: string): string {
-  return "part2 not implemented";
+  return caloriesByElf;
 }
