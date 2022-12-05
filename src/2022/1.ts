@@ -1,4 +1,4 @@
-export default (input: string) => {
+export function part1(input: string): string {
   // get an array of numbers for each elf
   const calorieListByElf = input
     .split("\n\n")
@@ -12,5 +12,9 @@ export default (input: string) => {
   // sort caloriesByElf in descending order
   caloriesByElf.sort((a, b) => b - a);
 
-  console.log(caloriesByElf[0]);
-};
+  return caloriesByElf[0].toString();
+}
+
+export function part2(input: string): string {
+  return "part2 not implemented";
+}
