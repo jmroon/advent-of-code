@@ -1,5 +1,3 @@
-import { Dir } from 'fs';
-
 export function part1(input: string) {
   const root = buildFileSystem(input.split('\n'));
   return root.flatDirs
