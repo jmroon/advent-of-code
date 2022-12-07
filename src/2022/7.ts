@@ -1,3 +1,5 @@
+import { Dir } from 'fs';
+
 export function part1(input: string) {
   const root = buildFileSystem(input.split('\n'));
   return root.flatDirs
@@ -21,14 +23,13 @@ function buildFileSystem(cmds: string[]): Directory {
 
   let currentDir = root;
 
-  for (let i = 0; i < cmds.length; i++) {
-    const cmd = cmds[i];
+  cmds.forEach((cmd) => {
     if (cmd.startsWith('$ cd /')) {
       currentDir = root;
     } else if (cmd.startsWith('$ cd ')) {
       currentDir = currentDir.cd(cmd.slice(5));
     } else if (cmd.startsWith('$ ls ')) {
-      break;
+      return;
     } else if (cmd.startsWith('dir ')) {
       const name = cmd.slice(4);
       currentDir.addDir(name);
@@ -36,7 +37,8 @@ function buildFileSystem(cmds: string[]): Directory {
       const [size, name] = cmd.split(' ');
       currentDir.addFile(name, parseInt(size));
     }
-  }
+  });
+
   return root;
 }
 
@@ -77,9 +79,9 @@ class Directory {
   get flatDirs(): Directory[] {
     return [
       this,
-      ...this.children.reduce<Directory[]>(
+      ...this.children.reduce(
         (dirs, dir) => [...dirs, ...dir.flatDirs],
-        []
+        [] as Directory[]
       ),
     ];
   }
