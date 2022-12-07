@@ -1,73 +1,70 @@
 export function part1(input: string) {
-  const [, flatDirs] = buildFileSystem(input.split('\n'));
-
-  return [...flatDirs.values()]
+  const root = buildFileSystem(input.split('\n'));
+  return root.flatDirs
     .filter((dir) => dir.size < 100000)
     .reduce((totalSize, dir) => (totalSize += dir.size), 0);
 }
 
 export function part2(input: string) {
-  const [fileSystem, flatDirs] = buildFileSystem(input.split('\n'));
+  const root = buildFileSystem(input.split('\n'));
 
-  const spaceToFree = 30000000 - 70000000 + fileSystem.size;
+  const spaceToFree = 30000000 - 70000000 + root.size;
 
-  return [...flatDirs.values()]
+  return root.flatDirs
     .filter((dir) => dir.size > spaceToFree)
     .map((dir) => dir.size)
     .sort()[0];
 }
 
-function buildFileSystem(
-  cmds: string[]
-): [fileSystem: Directory, flatDirs: Set<Directory>] {
-  const fileSystem = new Directory('/');
+function buildFileSystem(cmds: string[]): Directory {
+  const root = new Directory('/');
 
-  const flatDirs = new Set<Directory>();
-
-  let currentDir = fileSystem;
+  let currentDir = root;
 
   for (let i = 0; i < cmds.length; i++) {
     const cmd = cmds[i];
     if (cmd.startsWith('$ cd /')) {
-      currentDir = fileSystem;
+      currentDir = root;
     } else if (cmd.startsWith('$ cd ')) {
       currentDir = currentDir.cd(cmd.slice(5));
     } else if (cmd.startsWith('$ ls ')) {
       break;
     } else if (cmd.startsWith('dir ')) {
       const name = cmd.slice(4);
-      const newDir = currentDir.addDir(name);
-      if (newDir) {
-        flatDirs.add(currentDir.cd(name));
-      }
+      currentDir.addDir(name);
     } else if (cmd[0].match(/\d/)) {
       const [size, name] = cmd.split(' ');
       currentDir.addFile(name, parseInt(size));
     }
   }
-  return [fileSystem, flatDirs];
+  return root;
 }
 
 class Directory {
   children: Directory[] = [];
-  files: File[] = [];
+  files: { name: string; size: number }[] = [];
 
   constructor(public name: string, public parent?: Directory) {}
 
-  addDir(name: string): Directory | undefined {
+  addDir(name: string): void {
     if (this.children.find((dir) => dir.name === name)) {
       return;
     }
-    const dir = new Directory(name, this);
-    this.children.push(dir);
-    return dir;
+    this.children.push(new Directory(name, this));
   }
 
   addFile(name: string, size: number): void {
     if (this.files.some((file) => file.name === name)) {
       return;
     }
-    this.files.push(new File(name, size));
+    this.files.push({ name, size });
+  }
+
+  cd(name: string): Directory {
+    if (name === '..') {
+      return this.parent!;
+    }
+    return this.children.find((dir) => dir.name === name)!;
   }
 
   get size(): number {
@@ -77,14 +74,13 @@ class Directory {
     );
   }
 
-  cd(name: string): Directory {
-    if (name === '..') {
-      return this.parent!;
-    }
-    return this.children.find((dir) => dir.name === name)!;
+  get flatDirs(): Directory[] {
+    return [
+      this,
+      ...this.children.reduce<Directory[]>(
+        (dirs, dir) => [...dirs, ...dir.flatDirs],
+        []
+      ),
+    ];
   }
-}
-
-class File {
-  constructor(public name: string, public size: number) {}
 }
