@@ -31,8 +31,7 @@ function buildFileSystem(cmds: string[]): Directory {
     } else if (cmd.startsWith('$ ls ')) {
       return;
     } else if (cmd.startsWith('dir ')) {
-      const name = cmd.slice(4);
-      currentDir.addDir(name);
+      currentDir.addDir(cmd.slice(4));
     } else if (cmd[0].match(/\d/)) {
       const [size, name] = cmd.split(' ');
       currentDir.addFile(name, parseInt(size));
@@ -49,24 +48,21 @@ class Directory {
   constructor(public name: string, public parent?: Directory) {}
 
   addDir(name: string): void {
-    if (this.children.find((dir) => dir.name === name)) {
-      return;
+    if (!this.children.some((dir) => dir.name === name)) {
+      this.children.push(new Directory(name, this));
     }
-    this.children.push(new Directory(name, this));
   }
 
   addFile(name: string, size: number): void {
-    if (this.files.some((file) => file.name === name)) {
-      return;
+    if (!this.files.some((file) => file.name === name)) {
+      this.files.push({ name, size });
     }
-    this.files.push({ name, size });
   }
 
   cd(name: string): Directory {
-    if (name === '..') {
-      return this.parent!;
-    }
-    return this.children.find((dir) => dir.name === name)!;
+    return name === '..'
+      ? this.parent!
+      : this.children.find((dir) => dir.name === name)!;
   }
 
   get size(): number {
@@ -79,9 +75,9 @@ class Directory {
   get flatDirs(): Directory[] {
     return [
       this,
-      ...this.children.reduce(
+      ...this.children.reduce<Directory[]>(
         (dirs, dir) => [...dirs, ...dir.flatDirs],
-        [] as Directory[]
+        []
       ),
     ];
   }
