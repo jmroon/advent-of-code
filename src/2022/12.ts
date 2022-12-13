@@ -10,6 +10,8 @@ export function part1(input: string) {
 export function part2(input: string) {
   const map = input.split('\n').map((row) => row.split(''));
 
+  // these reducers are garbage, but I'm tired and it works
+  // for loop would be more legible
   const startPositions = map.reduce<{ x: number; y: number }[]>((positions, row, y) => {
     const foundPositions = row
       .reduce<number[]>((xPositions, char, x) => (char === 'a' ? [...xPositions, x] : xPositions), [])
