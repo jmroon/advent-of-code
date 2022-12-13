@@ -3,9 +3,9 @@ export function part1(input: string) {
     .split('\n\n')
     .map((pair) => pair.split('\n').map((packet) => JSON.parse(packet)) as [Packet, Packet]);
 
-  return pairs.reduce((counts, pair, index) => {
-    return compare(pair[0], pair[1]) === -1 ? [...counts, index + 1] : counts;
-  }, [] as number[]);
+  return pairs.reduce((count, pair, index) => {
+    return compare(pair[0], pair[1]) === -1 ? count + index + 1 : count;
+  }, 0);
 }
 
 export function part2(input: string) {
