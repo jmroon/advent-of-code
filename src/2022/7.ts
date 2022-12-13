@@ -26,8 +26,6 @@ function buildFileSystem(cmds: string[]): Directory {
       currentDir = root;
     } else if (cmd.startsWith('$ cd ')) {
       currentDir = currentDir.cd(cmd.slice(5));
-    } else if (cmd.startsWith('$ ls ')) {
-      return;
     } else if (cmd.startsWith('dir ')) {
       currentDir.addDir(cmd.slice(4));
     } else if (cmd[0].match(/\d/)) {
